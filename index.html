@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mess Feedback</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>🍽️ Hostel Mess Feedback</h1>
+
+<div class="buttons">
+    <button onclick="sendFeedback('good')">👍 Good</button>
+    <button onclick="sendFeedback('average')">😐 Average</button>
+    <button onclick="sendFeedback('poor')">👎 Poor</button>
+</div>
+
+<div class="results">
+    <h2>Live Feedback Count</h2>
+    <p>Good: <span id="good">0</span></p>
+    <p>Average: <span id="average">0</span></p>
+    <p>Poor: <span id="poor">0</span></p>
+</div>
+
+<script>
+function sendFeedback(type) {
+    fetch("/feedback", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({type: type})
+    })
+    .then(res => res.json())
+    .then(updateUI);
+}
+
+function updateUI(data) {
+    document.getElementById("good").innerText = data.good;
+    document.getElementById("average").innerText = data.average;
+    document.getElementById("poor").innerText = data.poor;
+}
+
+setInterval(() => {
+    fetch("/counts")
+    .then(res => res.json())
+    .then(updateUI);
+}, 1000);
+</script>
+
+</body>
+</html>
